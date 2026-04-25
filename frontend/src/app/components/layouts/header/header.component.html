@@ -1,0 +1,20 @@
+    <mat-toolbar color="primary">
+      <button mat-icon-button (click)="menuToggle.emit()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span routerLink="/" style="cursor:pointer;font-weight:bold">🛒 ShopMart</span>
+      <span style="flex:1"></span>
+
+      <button mat-icon-button routerLink="/cart">
+        <mat-icon [matBadge]="cartCount$ | async" matBadgeColor="warn">shopping_cart</mat-icon>
+      </button>
+
+      <!-- <ng-container *ngIf="user$ | async as user; else loginBtn">
+        <span style="margin:0 8px">{{ user?.name }}</span>
+        <button mat-button (click)="logout()">Logout</button>
+      </ng-container>
+      <ng-template #loginBtn>
+        <button mat-button routerLink="/login">Login</button>
+        <button mat-raised-button routerLink="/register">Register</button>
+      </ng-template> -->
+    </mat-toolbar>

@@ -1,0 +1,71 @@
+ <div *ngIf="loading" style="text-align:center;padding:40px">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="product && !loading" style="max-width:900px;margin:auto">
+      <div style="display:flex;gap:24px;flex-wrap:wrap">
+        <img [src]="product.image || 'https://via.placeholder.com/400x300'"
+             style="width:400px;border-radius:8px;object-fit:cover">
+
+        <div style="flex:1">
+          <h1>{{ product.name }}</h1>
+          <p style="color:#666">{{ product.description }}</p>
+          <p>Category: <b>{{ product.category?.name }}</b></p>
+
+          <div style="display:flex;align-items:center;gap:4px;margin:8px 0">
+            <mat-icon *ngFor="let s of getStars()" style="color:gold">star</mat-icon>
+            <span>({{ product.numReviews }} reviews)</span>
+          </div>
+
+          <h2 style="color:#1976d2">₹{{ product.price | number }}</h2>
+          <p [style.color]="product.stock > 0 ? 'green' : 'red'">
+            {{ product.stock > 0 ? 'In Stock' : 'Out of Stock' }}
+          </p>
+
+          <div style="display:flex;gap:8px;margin-top:16px">
+            <button mat-raised-button color="accent"
+                    [disabled]="product.stock === 0"
+                    (click)="addToCart()">
+              <mat-icon>add_shopping_cart</mat-icon> Add to Cart
+            </button>
+            <button mat-raised-button color="primary"
+                    [disabled]="product.stock === 0"
+                    (click)="buyNow()">
+              <mat-icon>flash_on</mat-icon> Buy Now
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <mat-divider style="margin:24px 0"></mat-divider>
+
+      <!-- Reviews Section -->
+      <h2>Customer Reviews</h2>
+      <div *ngFor="let review of reviews" style="margin-bottom:16px;border:1px solid #eee;padding:12px;border-radius:8px">
+        <div style="display:flex;justify-content:space-between">
+          <b>{{ review.user?.name }}</b>
+          <div>
+            <mat-icon *ngFor="let s of getStars(review.rating)" style="color:gold;font-size:18px">star</mat-icon>
+          </div>
+        </div>
+        <p>{{ review.comment }}</p>
+      </div>
+      <p *ngIf="reviews.length === 0" style="color:#999">No reviews yet.</p>
+
+      <!-- Add Review -->
+      <div *ngIf="isLoggedIn" style="margin-top:16px">
+        <h3>Add Your Review</h3>
+        <div style="margin-bottom:8px">
+          <span>Rating: </span>
+          <mat-icon *ngFor="let s of [1,2,3,4,5]"
+                    (click)="newReview.rating = s"
+                    [style.color]="s <= newReview.rating ? 'gold' : '#ccc'"
+                    style="cursor:pointer">star</mat-icon>
+        </div>
+        <mat-form-field appearance="outline" style="width:100%">
+          <mat-label>Comment</mat-label>
+          <textarea matInput [(ngModel)]="newReview.comment" rows="3"></textarea>
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="submitReview()">Submit Review</button>
+      </div>
+    </div>
