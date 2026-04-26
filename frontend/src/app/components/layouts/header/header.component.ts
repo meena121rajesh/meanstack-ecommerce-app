@@ -8,6 +8,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -25,11 +26,11 @@ import { MatBadgeModule } from '@angular/material/badge';
 })
 export class HeaderComponent {
   @Output() menuToggle = new EventEmitter<void>();
-  user$: any;
-  cartCount$: any;
+  // user$: any;
+  // cartCount$: any;
 
-  // user$     = this.auth.currentUser$.asObservable();
-  // cartCount$ = this.cartService.cartCount$.asObservable();
+  user$: Observable<any> | undefined;
+  cartCount$: Observable<any> | undefined;
 
   constructor(
     private auth: AuthService,

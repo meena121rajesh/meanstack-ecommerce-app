@@ -1,25 +1,83 @@
 const Product = require('../models/product.model');
 
+// exports.getProducts = async (req, res) => {
+//   try {
+//     const { category, minPrice, maxPrice, search, sort } = req.query;
+//     let filter = {};
+
+//     if (category)  filter.category = category;
+//     if (minPrice || maxPrice) {
+//       filter.price = {};
+//       if (minPrice) filter.price.$gte = Number(minPrice);
+//       if (maxPrice) filter.price.$lte = Number(maxPrice);
+//     }
+//     if (search) filter.name = { $regex: search, $options: 'i' };
+
+//     let query = Product.find(filter).populate('category');
+//     if (sort === 'price_asc')  query = query.sort({ price:  1 });
+//     if (sort === 'price_desc') query = query.sort({ price: -1 });
+//     if (sort === 'rating')     query = query.sort({ ratings: -1 });
+
+//     const products = await query;
+//     res.json(products);
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
+
 exports.getProducts = async (req, res) => {
   try {
-    const { category, minPrice, maxPrice, search, sort } = req.query;
+    const {
+      category, minPrice, maxPrice,
+      search, sort, minRating,
+      page = 0, size = 10
+    } = req.query;
+
     let filter = {};
 
-    if (category)  filter.category = category;
+    // Name search
+    if (search)
+      filter.name = { $regex: search, $options: 'i' };
+
+    // Category filter
+    if (category)
+      filter.category = category;
+
+    // Price range
     if (minPrice || maxPrice) {
       filter.price = {};
       if (minPrice) filter.price.$gte = Number(minPrice);
       if (maxPrice) filter.price.$lte = Number(maxPrice);
     }
-    if (search) filter.name = { $regex: search, $options: 'i' };
 
-    let query = Product.find(filter).populate('category');
-    if (sort === 'price_asc')  query = query.sort({ price:  1 });
-    if (sort === 'price_desc') query = query.sort({ price: -1 });
-    if (sort === 'rating')     query = query.sort({ ratings: -1 });
+    // Rating filter
+    if (minRating)
+      filter.ratings = { $gte: Number(minRating) };
 
-    const products = await query;
-    res.json(products);
+    // Sort
+    let sortObj = {};
+    if (sort === 'price_asc')  sortObj = { price:   1 };
+    if (sort === 'price_desc') sortObj = { price:  -1 };
+    if (sort === 'rating')     sortObj = { ratings: -1 };
+    if (sort === 'newest')     sortObj = { createdAt: -1 };
+
+    const pageNum  = Number(page);
+    const pageSize = Number(size);
+    const skip     = pageNum * pageSize;
+
+    // Get total count + paginated results in parallel
+    const [total, products] = await Promise.all([
+      Product.countDocuments(filter),
+      Product.find(filter)
+             .populate('category')
+             .sort(sortObj)
+             .skip(skip)
+             .limit(pageSize)
+    ]);
+
+    // Return { products, total } — frontend expects this
+    res.json({ products, total });
+
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
