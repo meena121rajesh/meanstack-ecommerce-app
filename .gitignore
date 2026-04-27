@@ -1,44 +1,16 @@
-# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files
+# Dependency directories (covers both frontend/node_modules and backend/node_modules)
+**/node_modules/
 
-# Compiled output
-/dist
-/tmp
-/out-tsc
-/bazel-out
+# Editor-specific files
+.vscode/
 
-# Node (ignore for ALL projects - backend + frontend)
-/node_modules
-**/node_modules
-npm-debug.log
-yarn-error.log
-.env
-
-# IDEs and editors
-.idea/
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-
-# VS Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-.history/*
-
-# Misc
-/.angular/cache
-.sass-cache/
-/connect.lock
-/coverage
-/libpeerconnection.log
-testem.log
-/typings
-
-# System files
+# System-specific files
 .DS_Store
 Thumbs.db
+
+# Optional: Ignore environment variables (highly recommended)
+.env.DS_Store
+node_modules/
+dist/
+.angular/
+*.js.map
